@@ -57,7 +57,7 @@ def ml_loop():
             comm.send_instruction(scene_info.frame, PlatformAction.SERVE_TO_LEFT)
             ball_served = True
         else:
-            if ball_y > 130 and ball_y < 380 and f > save:
+            if ball_y > 240 and ball_y < 395 and f > save:
                 if ball_x > ball_x_before and ball_y > ball_y_before :
                     save = ((400 - ball_y) / 7) + 1 + f
                     t = ball_y + (200 - ball_x)
@@ -72,7 +72,7 @@ def ml_loop():
                         destination_x = t
                     else :
                         destination_x = 400 - t
-            elif ball_y <= 130 :
+            elif ball_y <= 240 :
                 destination_x = 100
             
             if platform_x + 20 >= destination_x - 5 and platform_x + 20 <= destination_x + 5 :
