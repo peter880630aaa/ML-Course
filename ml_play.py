@@ -1,13 +1,14 @@
 """
 The template of the main script of the machine learning process
 """
+import pickle
+from os import path
 
-import games.arkanoid.communication as comm
-from games.arkanoid.communication import ( \
-    SceneInfo, GameStatus, PlatformAction
-)
+import numpy as np
+from mlgame.communication import ml as comm
 
-def ml_loop():
+
+def ml_loop(side: str):
     """
     The main loop of the machine learning process
 
@@ -22,67 +23,75 @@ def ml_loop():
     # === Here is the execution order of the loop === #
     # 1. Put the initialization code here.
     ball_served = False
-    ball_x_before = 100
-    ball_y_before = 395
-    destination_x = 100
-    save = 0
+    filename = path.join(path.dirname(__file__), 'save', 'clf_Knn_BallAndDirection_1P.pickle')
+    with open(filename, 'rb') as file:
+        clf = pickle.load(file)
+    s = 85
+    
+    def get_direction(x, pre_x):
+        Vector = x - pre_x
+        if (Vector < 0):
+            return 0
+        elif (Vector > 0):
+            return 1
 
     # 2. Inform the game process that ml process is ready before start the loop.
     comm.ml_ready()
+    
+
 
     # 3. Start an endless loop.
     while True:
         # 3.1. Receive the scene information sent from the game process.
-        scene_info = comm.get_scene_info()
+        scene_info = comm.recv_from_game()
+        feature = []
+        feature.append(scene_info["ball"][0])
+        feature.append(scene_info["ball"][1])
+        feature.append(scene_info["ball_speed"][0])
+        feature.append(scene_info["ball_speed"][1])
+        feature.append(scene_info["blocker"][0])
 
+        feature.append(get_direction(feature[4], s))
+        s = feature[4]
+
+        feature = np.array(feature)
+        feature = feature.reshape((-1,6))
         # 3.2. If the game is over or passed, the game process will reset
         #      the scene and wait for ml process doing resetting job.
-        if scene_info.status == GameStatus.GAME_OVER or \
-            scene_info.status == GameStatus.GAME_PASS:
-            # Do some stuff if needed
+        if scene_info["status"] != "GAME_ALIVE":
+            # Do some updating or resetting stuff
             ball_served = False
 
-            # 3.2.1. Inform the game process that ml process is ready
+            # 3.2.1 Inform the game process that
+            #       the ml process is ready for the next round
             comm.ml_ready()
             continue
 
         # 3.3. Put the code here to handle the scene information
-        ball_x = scene_info.ball[0]
-        ball_y = scene_info.ball[1]
-        platform_x = scene_info.platform[0]
-        f = scene_info.frame
 
         # 3.4. Send the instruction for this frame to the game process
         if not ball_served:
-            comm.send_instruction(scene_info.frame, PlatformAction.SERVE_TO_LEFT)
+            comm.send_to_game({"frame": scene_info["frame"], "command": "SERVE_TO_LEFT"})
             ball_served = True
         else:
-            if ball_y > 240 and ball_y < 395 and f > save:
-                if ball_x > ball_x_before and ball_y > ball_y_before :
-                    save = ((400 - ball_y) / 7) + 1 + f
-                    t = ball_y + (200 - ball_x)
-                    if (400 - t) >= 200 :
-                        destination_x = 200 - t
-                    else :
-                        destination_x = t - 200
-                elif ball_x < ball_x_before and ball_y > ball_y_before :
-                    save = ((400 - ball_y) / 7) + 1 + f
-                    t = ball_y + ball_x
-                    if (400 - t) >= 200 :
-                        destination_x = t
-                    else :
-                        destination_x = 400 - t
-            elif ball_y <= 240 :
-                destination_x = 100
+                
+            x = clf.predict(feature)
+            x2 = scene_info["platform_1P"][0]
             
-            if platform_x + 20 >= destination_x - 5 and platform_x + 20 <= destination_x + 5 :
-                comm.send_instruction(scene_info.frame, PlatformAction.NONE)
-            elif platform_x + 20 < destination_x :
-                comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
-            elif platform_x + 20 > destination_x :
-                comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
-            else :
-                comm.send_instruction(scene_info.frame, PlatformAction.NONE)
-        
-        ball_x_before = ball_x
-        ball_y_before = ball_y
+            if x == -1 and x2 <= 85 and x2 >= 75:
+                comm.send_to_game({"frame": scene_info["frame"], "command": "NONE"})
+            elif x == -1 and x2 < 80:
+                comm.send_to_game({"frame": scene_info["frame"], "command": "MOVE_RIGHT"})
+            elif x == -1 and x2 > 80:
+                comm.send_to_game({"frame": scene_info["frame"], "command": "MOVE_LEFT"})
+            #elif (x2 + 20) <= (x + 5) and (x2 + 20) >= (x - 5):
+                #comm.send_to_game({"frame": scene_info["frame"], "command": "NONE"})
+            elif x == (x2 + 20):
+                comm.send_to_game({"frame": scene_info["frame"], "command": "NONE"})
+                #print('NONE')
+            elif x > (x2 + 20):
+                comm.send_to_game({"frame": scene_info["frame"], "command": "MOVE_RIGHT"})
+                #print('LEFT')
+            elif x < (x2 + 20):
+                comm.send_to_game({"frame": scene_info["frame"], "command": "MOVE_LEFT"})
+                #print('RIGHT')
