@@ -63,10 +63,10 @@ class MLPlay:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
                     if x <= 40 and x >= -40 :
-                        if y > 0 and y < 280:
+                        if y > 0 and y < 320:
                             speed_ahead_2 = car["velocity"]
                             grid.add(10)
-                            if y < 200:
+                            if y < 270:
                                 grid.add(2)
                                 if y < 140:
                                     speed_ahead = car["velocity"]
@@ -95,7 +95,7 @@ class MLPlay:
             if len(grid) == 0:
                 if self.car_pos[0] > self.lanes[self.car_lane]:
                     return ["SPEED", "MOVE_LEFT"]
-                elif self.car_pos[0 ] < self.lanes[self.car_lane]:
+                elif self.car_pos[0] < self.lanes[self.car_lane]:
                     return ["SPEED", "MOVE_RIGHT"]
                 else :return ["SPEED"]
             else:
@@ -110,7 +110,7 @@ class MLPlay:
                     # Back to lane center
                     if self.car_pos[0] > self.lanes[self.car_lane]:
                         return ["SPEED", "MOVE_LEFT"]
-                    elif self.car_pos[0 ] < self.lanes[self.car_lane]:
+                    elif self.car_pos[0] < self.lanes[self.car_lane]:
                         return ["SPEED", "MOVE_RIGHT"]
                     else :return ["SPEED"]
                 else:
