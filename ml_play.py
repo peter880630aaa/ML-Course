@@ -66,7 +66,7 @@ class MLPlay:
                         if y > 0 and y < 300:
                             speed_ahead_2 = car["velocity"]
                             grid.add(10)
-                            if y < 240:
+                            if y < 220:
                                 grid.add(2)
                                 if y < 140:
                                     speed_ahead = car["velocity"]
