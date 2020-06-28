@@ -97,7 +97,7 @@ class MLPlay:
             if scene_info.__contains__("coins"):
                 for coin in scene_info["coins"]:
                     if coin[1] < self.car_pos[1]:
-                        if self.car_pos[0] == coin[0]:
+                        if self.car_pos[0] >= (coin[0] - 1) and self.car_pos[0] <= (coin[0] + 1):
                             dif_coin_p = 0
                             side_coin_p = 0
                         elif self.car_pos[0] > coin[0]:
