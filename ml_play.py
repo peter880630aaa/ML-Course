@@ -137,9 +137,9 @@ class MLPlay:
                     return ["BRAKE", "MOVE_LEFT"]
                 else:
                     return ["BRAKE"]
-            if dif_right <= 43:
+            if dif_right <= 45:
                 return ["SPEED", "MOVE_LEFT"]
-            if dif_left <= 43:
+            if dif_left <= 45:
                 return ["SPEED", "MOVE_RIGHT"]
             if (1 not in grid) and (2 not in grid) and (3 not in grid) and (4 not in grid) and (5 not in grid) and (6 not in grid) and (7 not in grid) and (8 not in grid) and (9 not in grid):
                 if side_coin == 0:
