@@ -97,14 +97,14 @@ class MLPlay:
             if scene_info.__contains__("coins"):
                 for coin in scene_info["coins"]:
                     if coin[1] < self.car_pos[1]:
-                        if self.car_pos[0] >= (coin[0] - 1) and self.car_pos[0] <= (coin[0] + 1):
+                        if self.car_pos[0] >= (coin[0] + 10 - 1) and self.car_pos[0] <= (coin[0] + 10 + 1):
                             dif_coin_p = 0
                             side_coin_p = 0
-                        elif self.car_pos[0] > coin[0]:
-                            dif_coin_p = self.car_pos[0] - coin[0]
+                        elif self.car_pos[0] > (coin[0] + 10):
+                            dif_coin_p = self.car_pos[0] - (coin[0] + 10)
                             side_coin_p = 1
                         else:
-                            dif_coin_p = coin[0] - self.car_pos[0]
+                            dif_coin_p = (coin[0] + 10) - self.car_pos[0]
                             side_coin_p = 2
                         if dif_coin_p < dif_coin:
                             dif_coin = dif_coin_p
@@ -134,10 +134,12 @@ class MLPlay:
             if (1 not in grid) and (2 not in grid) and (3 not in grid) and (4 not in grid) and (5 not in grid) and (6 not in grid) and (7 not in grid) and (8 not in grid) and (9 not in grid):
                 if side_coin == 0:
                     return ["SPEED"]
-                elif side_coin == 1:
+                elif side_coin == 1 and (self.car_pos[1] <= 540):
                     return ["SPEED", "MOVE_LEFT"]
-                elif side_coin == 2:
+                elif side_coin == 2 and (self.car_pos[1] <= 540):
                     return ["SPEED", "MOVE_RIGHT"]
+                else:
+                    return ["SPEED"]
             else:
                 if (2 not in grid): # Check forward 
                     if self.turn_left == 1:
