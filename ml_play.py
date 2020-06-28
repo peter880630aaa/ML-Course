@@ -65,7 +65,7 @@ class MLPlay:
                 if car["id"] != self.player_no:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
-                    if x <= 43 and x >= -40 :
+                    if x <= 43 and x >= -43 :
                         if y > 0 and y < 280:
                             speed_ahead_2 = car["velocity"]
                             grid.add(10)
@@ -79,7 +79,7 @@ class MLPlay:
                                     grid.add(5) 
                         elif y < 0 and y > -105:
                             grid.add(8)
-                    if x >= -70 and x < -40 :
+                    if x >= -70 and x < -43 :
                         if y > 80 and y < 120:
                             grid.add(3)
                         elif y < -80 and y > -105:
