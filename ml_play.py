@@ -36,6 +36,8 @@ class MLPlay:
             dif_ahead = 250
             dif_coin = 1000
             side_coin = 0
+            dif_left = 100
+            dif_right = 100
             if self.car_pos[0] <= 35: # left bound
                 grid.add(1)
                 grid.add(4)
@@ -85,6 +87,8 @@ class MLPlay:
                         elif y < -80 and y > -105:
                             grid.add(9)
                         elif y < 80 and y > -80:
+                            if (-x) < dif_right:
+                                dif_right = (-x)
                             grid.add(6)
                     if x <= 70 and x > 43:
                         if y > 80 and y < 120:
@@ -92,6 +96,8 @@ class MLPlay:
                         elif y < -80 and y > -105:
                             grid.add(7)
                         elif y < 80 and y > -80:
+                            if x < dif_left:
+                                dif_left = x
                             grid.add(4)
             
             if scene_info.__contains__("coins"):
@@ -110,9 +116,9 @@ class MLPlay:
                             dif_coin = dif_coin_p
                             side_coin = side_coin_p
 
-            return move(grid= grid, speed_ahead = speed_ahead, speed_ahead_2 = speed_ahead_2, dif_ahead= dif_ahead, side_coin = side_coin)
+            return move(grid= grid, speed_ahead = speed_ahead, speed_ahead_2 = speed_ahead_2, dif_ahead= dif_ahead, side_coin = side_coin, dif_right = dif_right, dif_left = dif_left)
             
-        def move(grid, speed_ahead, speed_ahead_2, dif_ahead, side_coin): 
+        def move(grid, speed_ahead, speed_ahead_2, dif_ahead, side_coin, dif_right, dif_left): 
             # if self.player_no == 0:
             #     print(grid)
             if (10 in grid) and (self.car_vel - speed_ahead_2) > 10:
@@ -131,6 +137,10 @@ class MLPlay:
                     return ["BRAKE", "MOVE_LEFT"]
                 else:
                     return ["BRAKE"]
+            if dif_right <= 43:
+                return ["SPEED", "MOVE_LEFT"]
+            if dif_left <= 43:
+                return ["SPEED", "MOVE_RIGHT"]
             if (1 not in grid) and (2 not in grid) and (3 not in grid) and (4 not in grid) and (5 not in grid) and (6 not in grid) and (7 not in grid) and (8 not in grid) and (9 not in grid):
                 if side_coin == 0:
                     return ["SPEED"]
