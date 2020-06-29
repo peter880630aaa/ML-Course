@@ -67,7 +67,7 @@ class MLPlay:
                 if car["id"] != self.player_no:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
-                    if x <= 45 and x >= -45 :
+                    if x <= 46 and x >= -46 :
                         if y > 0 and y < 280:
                             speed_ahead_2 = car["velocity"]
                             grid.add(10)
@@ -81,7 +81,7 @@ class MLPlay:
                                     grid.add(5) 
                         elif y < 0 and y > -105:
                             grid.add(8)
-                    if x >= -70 and x < -45 :
+                    if x >= -70 and x < -46 :
                         if y > 80 and y < 135:
                             grid.add(3)
                         elif y < -80 and y > -105:
@@ -90,7 +90,7 @@ class MLPlay:
                             if (-x) < dif_right:
                                 dif_right = (-x)
                             grid.add(6)
-                    if x <= 70 and x > 45:
+                    if x <= 70 and x > 46:
                         if y > 80 and y < 135:
                             grid.add(1)
                         elif y < -80 and y > -105:
@@ -137,9 +137,9 @@ class MLPlay:
                     return ["BRAKE", "MOVE_LEFT"]
                 else:
                     return ["BRAKE"]
-            if dif_right <= 45:
+            if dif_right <= 46:
                 return ["SPEED", "MOVE_LEFT"]
-            if dif_left <= 45:
+            if dif_left <= 46:
                 return ["SPEED", "MOVE_RIGHT"]
             if (1 not in grid) and (2 not in grid) and (3 not in grid) and (4 not in grid) and (5 not in grid) and (6 not in grid) and (7 not in grid) and (8 not in grid) and (9 not in grid):
                 if side_coin == 0:
